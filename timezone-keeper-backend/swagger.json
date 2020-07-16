@@ -54,7 +54,7 @@
                     "200": {
                         "description": "Success",
                         "schema": {
-                            "$ref": "#/definitions/TimezoneList2"
+                            "$ref": "#/definitions/TimezoneListNoId"
                         }
                     },
                     "404": {
@@ -793,18 +793,18 @@
             },
             "type": "object"
         },
-        "TimezoneList2": {
+        "TimezoneListNoId": {
             "properties": {
                 "data": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/Timezone2"
+                        "$ref": "#/definitions/TimezoneNoId"
                     }
                 }
             },
             "type": "object"
         },
-        "Timezone2": {
+        "TimezoneNoId": {
             "required": [
                 "city",
                 "id",

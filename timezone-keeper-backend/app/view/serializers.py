@@ -53,7 +53,7 @@ Timezone = rest.flask_api.model('Timezone', {
     'relative_to_gmt': flask_restplus.fields.String(required=True, description='gmt offset, in hours', example='0:00')
 })
 
-Timezone2 = rest.flask_api.model('Timezone2', {
+TimezoneNoId = rest.flask_api.model('TimezoneNoId', {
     'id': flask_restplus.fields.Integer(required=True, description='user timezone id', example=1),
     'location': flask_restplus.fields.String(required=True, description='timezone location', example='Europe'),
     'city': flask_restplus.fields.String(required=True, description='city name withing the timezone', example='London'),
@@ -75,6 +75,6 @@ TimezoneList = rest.flask_api.model('TimezoneList', {
     'data': flask_restplus.fields.List(flask_restplus.fields.Nested(Timezone, skip_none=True))
 })
 
-TimezoneList2 = rest.flask_api.model('TimezoneList2', {
-    'data': flask_restplus.fields.List(flask_restplus.fields.Nested(Timezone2, skip_none=True))
+TimezoneListNoId = rest.flask_api.model('TimezoneListNoId', {
+    'data': flask_restplus.fields.List(flask_restplus.fields.Nested(TimezoneNoId, skip_none=True))
 })

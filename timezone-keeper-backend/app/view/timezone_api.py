@@ -25,7 +25,7 @@ ns = flask_api.namespace('timezone', validate=True, description=__doc__)
 class Timezones(Resource):
     @ns.doc('list_timezones')
     @flask_jwt_extended.jwt_required
-    @ns.marshal_with(serializers.TimezoneList2, skip_none=True)
+    @ns.marshal_with(serializers.TimezoneListNoId, skip_none=True)
     def get(self):
         """Get all timezones"""
         utils.check_user_enabled()

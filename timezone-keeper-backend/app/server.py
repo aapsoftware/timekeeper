@@ -74,6 +74,16 @@ def jwt_check_blacklisted(decrypted_token):
     return RevokedUserTokens.is_blacklisted(jti)
 
 
+# callback to add CORS headers to each response
+def add_cors_headers(response):
+        response.headers['Access-Control-Allow-Origin'] = '*'
+        if request.method == 'OPTIONS':
+            response.headers['Access-Control-Allow-Methods'] = 'DELETE, GET, POST, PUT'
+            headers = request.headers.get('Access-Control-Request-Headers')
+            if headers:
+                response.headers['Access-Control-Allow-Headers'] = headers
+        return response
+
 def create_app(config):
     """
     Create a Flask app with a registered API and namespaces
@@ -98,14 +108,6 @@ def create_app(config):
     jwt.user_identity_loader(jwt_user_identity_lookup)
     jwt.token_in_blacklist_loader(jwt_check_blacklisted)
 
-    def add_cors_headers(response):
-        response.headers['Access-Control-Allow-Origin'] = '*'
-        if request.method == 'OPTIONS':
-            response.headers['Access-Control-Allow-Methods'] = 'DELETE, GET, POST, PUT'
-            headers = request.headers.get('Access-Control-Request-Headers')
-            if headers:
-                response.headers['Access-Control-Allow-Headers'] = headers
-        return response
     flask_app.after_request(add_cors_headers)
 
     return flask_app

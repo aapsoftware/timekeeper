@@ -460,14 +460,19 @@ def authenticate_user(username, passwd):
     """
     generates jwt token for user
     """
-    query = db.session.query(UserDetails, UserRoles).join(UserRoles, UserRoles.id == UserDetails.role_id)
-
+    query = db.session.query(UserDetails, UserRoles).outerjoin(UserRoles, UserRoles.id == UserDetails.role_id)
+    log.error(query.all())
     user = None
     if username is not None:
         query = query.filter(UserDetails.username == username)
         res = query.one_or_none()
+
+        if res and ( not res.UserDetails.enabled or not res.UserDetails.role_id ):
+            raise error.AuthError('User Account is not yet active, please contact support')
+
         if not(res and UserDetails.verify_hash(passwd, res.UserDetails.password)):
             raise error.AuthError('invalid user credentials')
+        
         user = res.UserRoles.to_dict()
         user.update(res.UserDetails.to_dict())
     else:
