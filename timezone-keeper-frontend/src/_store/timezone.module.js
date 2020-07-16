@@ -38,15 +38,24 @@ const actions = {
                         dispatch('alert/success', 'Timezone added successfully', { root: true });
                     })
                 },
-                error => commit('createFailure', { error: error.toString() })
+                error => {
+                    commit('createFailure', { error: error.toString() });
+                    dispatch('alert/error', error, { root: true });
+                }
             );
     },
-    delete({ commit }, name) {
+    delete({ dispatch, commit }, name) {
         commit('deleteRequest', name);
         timezoneService.delete(name)
             .then(
-                data => commit('deleteSuccess', name),
-                error => commit('deleteFailure', { name: name, error: error.toString() })
+                data => {
+                    commit('deleteSuccess', name);
+                    dispatch('alert/success', 'Timezone deleted successfully', { root: true });
+                },
+                error => {
+                    commit('deleteFailure', { name: name, error: error.toString() });
+                    dispatch('alert/error', error, { root: true });
+                }
             );
     },
     update({ dispatch, commit }, {name, timezone}) {
@@ -61,7 +70,10 @@ const actions = {
                         dispatch('alert/success', 'Timezone updated successfully', { root: true });
                     })
                 },
-                error => commit('updateFailure', { name: name, error: error.toString() })
+                error => {
+                    commit('updateFailure', { name: name, error: error.toString() });
+                    dispatch('alert/error', error, { root: true });
+                }
             );
     }
 };

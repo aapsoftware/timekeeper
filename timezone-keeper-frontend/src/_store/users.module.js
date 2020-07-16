@@ -14,12 +14,18 @@ const actions = {
                 error => commit('getUserDetailsFailure', error)
             );
     },
-    updateUserDetails({ commit }, userDetails) {
+    updateUserDetails({ dispath, commit }, userDetails) {
         commit('updateUserDetailsRequest');
         userService.updateUserDetails(userDetails)
             .then(
-                user => commit('updateUserDetailsSuccess', userDetails),
-                error => commit('updateUserDetailsFailure', error)
+                user => {
+                    commit('updateUserDetailsSuccess', userDetails);
+                    dispatch('alert/success', 'Account updated successfully', { root: true });
+                },
+                error => {
+                    commit('updateUserDetailsFailure', error);
+                    dispatch('alert/error', error, { root: true });
+                }
             );
     }
 };
@@ -43,7 +49,6 @@ const mutations = {
             ...state.user,
             ...user
         }
-        debugger
         state.status = { updatedUserDetails: true };
     },
     updateUserDetailsFailure(state, error) {

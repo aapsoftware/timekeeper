@@ -71,13 +71,7 @@ export default {
                 password: '',
                 email: ''
             },
-            user: {
-                first_name: 'a1',
-                last_name: 'a2',
-                username: 'a3',
-                password: 'a4',
-                email: 'a5'
-            },
+            user: {}
         }
     },
     computed: {
@@ -88,7 +82,6 @@ export default {
     created () {
         this.getUserDetails();
         this.user = this.users.user;
-        debugger
     },
     methods: {
         ...mapActions('users', {

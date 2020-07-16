@@ -9,7 +9,7 @@ const state = user
 const actions = {
     login({ dispatch, commit }, { username, password }) {
         commit('loginRequest', { username });
-    
+
         userService.login(username, password)
             .then(
                 user => {
@@ -22,13 +22,13 @@ const actions = {
                 }
             );
     },
-    logout({ commit }) {
-        userService.logout();
+    logout({ commit }, options) {
+        userService.logout(options);
         commit('logout');
     },
     register({ dispatch, commit }, user) {
         commit('registerRequest', user);
-    
+
         userService.register(user)
             .then(
                 user => {

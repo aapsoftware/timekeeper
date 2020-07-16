@@ -35,8 +35,11 @@ export default {
         ...mapState('account', ['status'])
     },
     created () {
-        // reset login status
-        this.logout();
+       let has_token = false
+       if(this.$route.query.has_token) {
+            has_token = true
+        }
+        this.logout({has_token: has_token});
     },
     methods: {
         ...mapActions('account', ['login', 'logout']),

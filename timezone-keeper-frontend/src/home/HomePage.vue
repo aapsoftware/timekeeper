@@ -1,7 +1,7 @@
 <template>
     <div>
         <p>
-            <button class="btn btn-primary" v-on:click="$router.push('/login')">Logout</button>
+            <button class="btn btn-primary" v-on:click="$router.push({path: '/login', query: { has_token: true }})">Logout</button>
             <button class="btn btn-primary" v-on:click="$router.push('/user')">Account</button>
         </p>
         <h1>Hi {{username}}!</h1>
