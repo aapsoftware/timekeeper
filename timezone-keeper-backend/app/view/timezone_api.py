@@ -80,7 +80,7 @@ class UserTimezones(Resource):
 @ns.param('username', 'username')
 @ns.param('name', 'timezone name')
 @ns.response(404, 'Not found error')
-class User(Resource):
+class UserTimezoneName(Resource):
     @ns.doc('get_user_timezone')
     @flask_jwt_extended.jwt_required
     @ns.marshal_with(serializers.Timezone)
@@ -92,7 +92,7 @@ class User(Resource):
 
     @ns.doc('update_user_timezone')
     @flask_jwt_extended.jwt_required
-    @ns.expect(serializers.Timezone, validate=True)
+    @ns.expect(serializers.UserTimezoneNoId, validate=True)
     @ns.response(200, 'User timezone successfully updated')
     @ns.response(400, 'Invalid user timezone data')
     def put(self, username, name):

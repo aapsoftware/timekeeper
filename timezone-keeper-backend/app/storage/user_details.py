@@ -18,6 +18,7 @@ class UserDetails(db.Model):
     role_id = db.Column(db.String, db.ForeignKey('UserRoles.id'))
     enabled = db.Column(db.Boolean, default=False)
 
+
     def __repr__(self):
         return (f'<id={self.id}, first_name={self.first_name}, last_name={self.last_name}, username={self.username}, '
                 f'email={self.email}, passwd={self.password}, role_id={self.role_id}, enabled={self.enabled}>')

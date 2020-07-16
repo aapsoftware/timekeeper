@@ -330,10 +330,9 @@ def get_user_timezone_all(username):
         for item in req_list:
             tz = item.TimeZones.to_dict()
             tz.update(item.UserTimeZones.to_dict())
-            log.error(tz)
             tz['username'] = item.username
             ret_list.append(tz)
-        log.error(ret_list)
+
         return {'data': ret_list}
 
     except sqlalchemy.exc.SQLAlchemyError as ex:
@@ -433,7 +432,7 @@ def update_user_timezone(username, tz_name, **kwargs):
             log.error(f'Could not update timezone {tz_name}: {ex}')
             raise error.StorageError(f'Could not update timezone {tz_name}!')
 
-    log.info(f'timezone {tz_name} updated')
+    log.info(f'timezone {tz_name} updated user {username}')
 
 
 def delete_user_timezone(username, name):
@@ -445,7 +444,7 @@ def delete_user_timezone(username, name):
     timezone = _get_timezone_by_username_and_name(username, name)
     if not timezone:
         raise error.RecordNotFoundError(f'timezone {tz_name} not found')
-
+    log.error(f'deleteing {timezone}')
     try:
         db.session.delete(timezone)
         db.session.commit()
@@ -454,7 +453,7 @@ def delete_user_timezone(username, name):
         log.error(f'Error while deleting timezone {name}: {ex}')
         raise error.StorageError(f'Error while deleting timezone {name}')
 
-    log.info(f'user {username} timezone {name} deleted')
+    log.info(f'timezone {name} deleted for user {username}')
 
 
 def authenticate_user(username, passwd):
@@ -475,7 +474,7 @@ def authenticate_user(username, passwd):
         raise error.AuthError("invalid username format")
 
     access_token = flask_jwt_extended.create_access_token(identity=user)
-    log.info(f'created JWT access tokens: {access_token}')
+    log.info(f'created JWT access tokens for user {username}: {access_token}')
 
     return {'access_token': access_token}
 
@@ -493,82 +492,3 @@ def revoke_token(jti):
         raise error.StorageError(f'problem revoking token')
 
     log.info(f'token {jti} revoked')
-
-# def _get_timestamp_now():
-#     '''
-#     get timestamp in in ISO 8601 format
-#     '''
-#     return datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
-
-
-
-
-# def create_book_request(email, title):
-#     '''
-#     validate and add a book request to db
-#     '''
-#     _check_email_address_format(email)
-#     title = get_book_title(title)
-#     timestamp = _get_timestamp_now()
-#     new_book_request = BookRequests(email=email, timestamp=timestamp, book_title=title)
-
-#     try:
-#         db.session.add(new_book_request)
-#         db.session.commit()
-#     except sqlalchemy.exc.SQLAlchemyError as ex:
-#         db.session.rollback()
-#         log.error(f'Could not add book request: {ex}')
-#         raise error.StorageError('Could not add book request!')
-
-#     ret_value = new_book_request.to_dict()
-#     ret_value['title'] = title.title
-#     log.info(f'new book request {ret_value} successfully added')
-#     return ret_value
-
-
-# def get_book_request(id_=None):
-#     '''
-#     get book requests from db
-#     '''
-#     query = db.session.query(BookRequests, BookTitles) \
-#             .join(BookRequests, BookTitles.id == BookRequests.book_title_id)
-#     try:
-#         if id_ is not None:
-#             query = query.filter(BookRequests.id == id_)
-#             res = query.one_or_none()
-#             if res is None:
-#                 raise error.BookReqFoundError('Book request not found')
-#             book_req = res.BookTitles.to_dict()
-#             book_req.update(res.BookRequests.to_dict())
-
-#             return book_req
-#         else:
-#             req_list = query.all()
-
-#             ret_list = []
-#             for x in req_list:
-#                 book_req_details = x.BookTitles.to_dict()
-#                 book_req_details.update(x.BookRequests.to_dict())
-#                 ret_list.append(book_req_details)
-
-#             return {'data': ret_list}
-
-#     except sqlalchemy.exc.SQLAlchemyError as ex:
-#         log.error(f'Error while retrieving book request: {ex}')
-#         raise error.StorageError('Error while retrieving book request')
-
-
-# def delete_book_request(id_):
-#     '''
-#     delete a book request by id
-#     '''
-#     try:
-#         book_req = BookRequests.get(id_)
-#         if book_req is None:
-#             raise error.BookReqFoundError('Book request not found')
-#         BookRequests.delete(id_)
-#     except sqlalchemy.exc.SQLAlchemyError as ex:
-#         log.error(f'Error while deleting book request {ex}')
-#         raise error.StorageError('Error while deleting book request')
-
-#     log.info(f'book request with id {id_} deleted')

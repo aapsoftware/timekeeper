@@ -14,11 +14,8 @@ class UserTimeZones(db.Model):
     timezone_id = db.Column(db.Integer(), db.ForeignKey('TimeZones.id'))
     name = db.Column(db.String, nullable=False)
 
-    user = db.relationship('UserDetails', backref="user_tz", single_parent=True,
-                            cascade="all, delete, delete-orphan")
-
     def __repr__(self):
-        return (f'<id={self.id}, user_id={self.user_id}, name={self.name}, timezone_id={self.timezone_id}')
+        return (f'<id={self.id}, user_id={self.user_id}, name={self.name}, timezone_id={self.timezone_id}>')
 
 
     def to_dict(self):
