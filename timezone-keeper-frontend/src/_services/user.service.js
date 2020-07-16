@@ -22,7 +22,6 @@ function login(username, password) {
         .then(handleResponse)
         .then(resp => {
             // login successful if there's a jwt token in the response
-            console.log('this')
             if (resp.access_token) {
                 // store user details and jwt token in local storage to keep user logged in between page refreshes
                 var user_data = {
@@ -36,21 +35,14 @@ function login(username, password) {
         });
 }
 
-function logout() {
+export function logout() {
     localStorage.removeItem('user');
-    // const requestOptions = {
-    //     method: 'POST',
-    //     headers: authHeader()
-    // };
-
-    // return fetch(`${config.apiUrl}/auth/logout`, requestOptions)
-    // .then(handleResponse)
-    // .then(resp => {
-    //     // remove user from local storage to log user out
-    //     localStorage.removeItem('user');
-
-    //     return resp;
-    // });
+    router.push('/');
+    const requestOptions = {
+        method: 'POST',
+        headers: authHeader()
+    };
+    fetch(`${config.apiUrl}/auth/logout`, requestOptions);
 }
 
 function register(user) {

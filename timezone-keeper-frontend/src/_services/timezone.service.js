@@ -1,6 +1,6 @@
 import config from 'config';
 import { authHeader } from '../_helpers';
-
+import { logout } from './user.service.js';
 
 export const timezoneService = {
     getAll,
@@ -59,7 +59,9 @@ function _delete(timezone_name) {
 }
 
 function handleResponse(response) {
+
     return response.text().then(text => {
+
         const data = text && JSON.parse(text);
         if (!response.ok) {
             if (response.status === 401) {
