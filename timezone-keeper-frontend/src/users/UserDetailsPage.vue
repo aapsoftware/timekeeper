@@ -4,28 +4,23 @@
             <h2>Update Account Details</h2>
             <div class="form-group">
                 <label for="firstName">First Name</label>
-                <input type="text" v-model="new_user.first_name" v-validate="{ min: 3 }" name="first_name" class="form-control" :class="{ 'is-invalid': submitted && errors.has('firstName') }" />
-                <div v-if="submitted && errors.has('firstName')" class="invalid-feedback">{{ errors.first('firstName') }}</div>
+                <input type="text" v-model="new_user.first_name" v-validate="{ min: 3 }" name="first_name" class="form-control" />
             </div>
             <div class="form-group">
                 <label for="lastName">Last Name</label>
-                <input type="text" v-model="new_user.last_name" v-validate="{ min: 3}" name="lastName" class="form-control" :class="{ 'is-invalid': submitted && errors.has('lastName') }" />
-                <div v-if="submitted && errors.has('lastName')" class="invalid-feedback">{{ errors.first('lastName') }}</div>
+                <input type="text" v-model="new_user.last_name" v-validate="{ min: 3}" name="lastName" class="form-control" />
             </div>
             <div class="form-group">
                 <label for="username">Username</label>
-                <input type="text" v-model="new_user.username" v-validate="{ min: 6}" name="username" class="form-control" :class="{ 'is-invalid': submitted && errors.has('username') }" />
-                <div v-if="submitted && errors.has('username')" class="invalid-feedback">{{ errors.first('username') }}</div>
+                <input type="text" v-model="new_user.username" v-validate="{ min: 6}" name="username" class="form-control"/>
             </div>
             <div class="form-group">
                 <label for="email">email</label>
-                <input type="text" v-model="new_user.email" v-validate="'email'" name="email" class="form-control" :class="{ 'is-invalid': submitted && errors.has('email') }" />
-                <div v-if="submitted && errors.has('email')" class="invalid-feedback">{{ errors.first('email') }}</div>
+                <input type="text" v-model="new_user.email" v-validate="'email'" name="email" class="form-control" />
             </div>
             <div class="form-group">
                 <label htmlFor="password">Password</label>
-                <input type="password" v-model="new_user.password" v-validate="{ min: 8}" name="password" class="form-control" :class="{ 'is-invalid': submitted && errors.has('password') }" />
-                <div v-if="submitted && errors.has('password')" class="invalid-feedback">{{ errors.first('password') }}</div>
+                <input type="password" v-model="new_user.password" v-validate="{ min: 8}" name="password" class="form-control" />
             </div>
             <div class="form-group">
                 <button class="btn btn-primary" v-on:click="handleSubmit({updateSubmit: true})">Update</button>
@@ -76,7 +71,13 @@ export default {
                 password: '',
                 email: ''
             },
-            user: {},
+            user: {
+                first_name: 'a1',
+                last_name: 'a2',
+                username: 'a3',
+                password: 'a4',
+                email: 'a5'
+            },
         }
     },
     computed: {
@@ -105,7 +106,7 @@ export default {
                             this.updateUserDetails(filtered);
                             this.user = {
                                 ...this.user,
-                                ...this.new_user
+                                ...filtered
                             }
                         }
                     });

@@ -18,7 +18,7 @@ const actions = {
         commit('updateUserDetailsRequest');
         userService.updateUserDetails(userDetails)
             .then(
-                user => commit('updateUserDetailsSuccess', user),
+                user => commit('updateUserDetailsSuccess', userDetails),
                 error => commit('updateUserDetailsFailure', error)
             );
     }
@@ -39,7 +39,11 @@ const mutations = {
         state.status = { updatingUserDetails: true };
     },
     updateUserDetailsSuccess(state, user) {
-        state.user = user;
+        state.user = {
+            ...state.user,
+            ...user
+        }
+        debugger
         state.status = { updatedUserDetails: true };
     },
     updateUserDetailsFailure(state, error) {
