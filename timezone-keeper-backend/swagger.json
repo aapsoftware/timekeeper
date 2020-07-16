@@ -1,0 +1,958 @@
+{
+    "swagger": "2.0",
+    "basePath": "/api/v1",
+    "paths": {
+        "/auth/login": {
+            "post": {
+                "responses": {
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "summary": "Returns JWT token on successful login",
+                "operationId": "login",
+                "parameters": [
+                    {
+                        "name": "payload",
+                        "required": true,
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/UserAuth"
+                        }
+                    }
+                ],
+                "tags": [
+                    "auth"
+                ]
+            }
+        },
+        "/auth/logout": {
+            "post": {
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "summary": "Revoke the current user's access token",
+                "operationId": "logout",
+                "security": [
+                    {
+                        "apikey": []
+                    }
+                ],
+                "tags": [
+                    "auth"
+                ]
+            }
+        },
+        "/timezone": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/TimezoneList2"
+                        }
+                    },
+                    "404": {
+                        "description": "timezone not found"
+                    }
+                },
+                "summary": "Get all timezones",
+                "operationId": "list_timezones",
+                "security": [
+                    {
+                        "apikey": []
+                    }
+                ],
+                "tags": [
+                    "timezone"
+                ]
+            }
+        },
+        "/timezone/{username}": {
+            "parameters": [
+                {
+                    "in": "path",
+                    "description": "username",
+                    "name": "username",
+                    "required": true,
+                    "type": "string"
+                }
+            ],
+            "post": {
+                "responses": {
+                    "404": {
+                        "description": "User timezone not found"
+                    },
+                    "409": {
+                        "description": "Conflict. Timezone with same name already exists"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "201": {
+                        "description": "timezone successfully created"
+                    },
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/UserTimezone"
+                        }
+                    }
+                },
+                "summary": "Creates a new timezone for a user",
+                "operationId": "create_new_user_timezone",
+                "parameters": [
+                    {
+                        "name": "payload",
+                        "required": true,
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/UserTimezoneNoId"
+                        }
+                    }
+                ],
+                "security": [
+                    {
+                        "apikey": []
+                    }
+                ],
+                "tags": [
+                    "timezone"
+                ]
+            },
+            "get": {
+                "responses": {
+                    "404": {
+                        "description": "User timezone not found"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/TimezoneList"
+                        }
+                    }
+                },
+                "summary": "Get all timezones for a user",
+                "operationId": "list_user_timezones",
+                "security": [
+                    {
+                        "apikey": []
+                    }
+                ],
+                "tags": [
+                    "timezone"
+                ]
+            }
+        },
+        "/timezone/{username}/{name}": {
+            "parameters": [
+                {
+                    "in": "path",
+                    "description": "timezone name",
+                    "name": "name",
+                    "required": true,
+                    "type": "string"
+                },
+                {
+                    "in": "path",
+                    "description": "username",
+                    "name": "username",
+                    "required": true,
+                    "type": "string"
+                }
+            ],
+            "delete": {
+                "responses": {
+                    "404": {
+                        "description": "Not found error"
+                    },
+                    "200": {
+                        "description": "User timezone successfully removed"
+                    }
+                },
+                "summary": "Delete user timezone",
+                "operationId": "delete_user_timezone",
+                "security": [
+                    {
+                        "apikey": []
+                    }
+                ],
+                "tags": [
+                    "timezone"
+                ]
+            },
+            "put": {
+                "responses": {
+                    "404": {
+                        "description": "Not found error"
+                    },
+                    "400": {
+                        "description": "Invalid user timezone data"
+                    },
+                    "200": {
+                        "description": "User timezone successfully updated"
+                    }
+                },
+                "summary": "Update user timezone",
+                "operationId": "update_user_timezone",
+                "parameters": [
+                    {
+                        "name": "payload",
+                        "required": true,
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/UserTimezoneNoId"
+                        }
+                    }
+                ],
+                "security": [
+                    {
+                        "apikey": []
+                    }
+                ],
+                "tags": [
+                    "timezone"
+                ]
+            },
+            "get": {
+                "responses": {
+                    "404": {
+                        "description": "Not found error"
+                    },
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/Timezone"
+                        }
+                    }
+                },
+                "summary": "Get user timezone by id",
+                "operationId": "get_user_timezone",
+                "security": [
+                    {
+                        "apikey": []
+                    }
+                ],
+                "tags": [
+                    "timezone"
+                ]
+            }
+        },
+        "/user": {
+            "post": {
+                "responses": {
+                    "409": {
+                        "description": "Conflict. User already exists"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "201": {
+                        "description": "User successfully created"
+                    },
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/User"
+                        }
+                    }
+                },
+                "summary": "Creates a new User",
+                "operationId": "create_new_user",
+                "parameters": [
+                    {
+                        "name": "payload",
+                        "required": true,
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/UserWithPasswd"
+                        }
+                    }
+                ],
+                "tags": [
+                    "user"
+                ]
+            },
+            "get": {
+                "responses": {
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "404": {
+                        "description": "No Users found"
+                    },
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/UserData"
+                        }
+                    }
+                },
+                "summary": "Get all users",
+                "operationId": "list_all_users",
+                "security": [
+                    {
+                        "apikey": []
+                    }
+                ],
+                "tags": [
+                    "user"
+                ]
+            }
+        },
+        "/user/{username}": {
+            "parameters": [
+                {
+                    "in": "path",
+                    "description": "User name",
+                    "name": "username",
+                    "required": true,
+                    "type": "string"
+                }
+            ],
+            "delete": {
+                "responses": {
+                    "404": {
+                        "description": "User not found"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "200": {
+                        "description": "User successfully removed"
+                    }
+                },
+                "summary": "Delete user",
+                "operationId": "delete_user",
+                "security": [
+                    {
+                        "apikey": []
+                    }
+                ],
+                "tags": [
+                    "user"
+                ]
+            },
+            "put": {
+                "responses": {
+                    "404": {
+                        "description": "User not found"
+                    },
+                    "400": {
+                        "description": "Invalid user data"
+                    },
+                    "200": {
+                        "description": "User successfully updated"
+                    }
+                },
+                "summary": "Update user",
+                "operationId": "update_user",
+                "parameters": [
+                    {
+                        "name": "payload",
+                        "required": true,
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/UserUpdatable"
+                        }
+                    }
+                ],
+                "security": [
+                    {
+                        "apikey": []
+                    }
+                ],
+                "tags": [
+                    "user"
+                ]
+            },
+            "get": {
+                "responses": {
+                    "404": {
+                        "description": "User not found"
+                    },
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/User"
+                        }
+                    }
+                },
+                "summary": "Get user by username",
+                "operationId": "get_user",
+                "security": [
+                    {
+                        "apikey": []
+                    }
+                ],
+                "tags": [
+                    "user"
+                ]
+            }
+        },
+        "/user/{username}/disable": {
+            "parameters": [
+                {
+                    "in": "path",
+                    "description": "User name",
+                    "name": "username",
+                    "required": true,
+                    "type": "string"
+                }
+            ],
+            "post": {
+                "responses": {
+                    "200": {
+                        "description": "User account disabled"
+                    },
+                    "404": {
+                        "description": "User not found"
+                    }
+                },
+                "summary": "disable user account",
+                "operationId": "disable_user",
+                "security": [
+                    {
+                        "apikey": []
+                    }
+                ],
+                "tags": [
+                    "user"
+                ]
+            }
+        },
+        "/user/{username}/enable": {
+            "parameters": [
+                {
+                    "in": "path",
+                    "description": "User name",
+                    "name": "username",
+                    "required": true,
+                    "type": "string"
+                }
+            ],
+            "post": {
+                "responses": {
+                    "200": {
+                        "description": "User account enabled"
+                    },
+                    "404": {
+                        "description": "User not found"
+                    }
+                },
+                "summary": "enable user account",
+                "operationId": "enable_user",
+                "security": [
+                    {
+                        "apikey": []
+                    }
+                ],
+                "tags": [
+                    "user"
+                ]
+            }
+        },
+        "/user_role": {
+            "post": {
+                "responses": {
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "404": {
+                        "description": "User role not found"
+                    },
+                    "409": {
+                        "description": "Conflict. User role already exists"
+                    },
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/UserRole"
+                        }
+                    }
+                },
+                "summary": "Creates a new user role",
+                "operationId": "create_new_user_role",
+                "parameters": [
+                    {
+                        "name": "payload",
+                        "required": true,
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/UserRole"
+                        }
+                    }
+                ],
+                "security": [
+                    {
+                        "apikey": []
+                    }
+                ],
+                "tags": [
+                    "user_role"
+                ]
+            },
+            "get": {
+                "responses": {
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "404": {
+                        "description": "User role not found"
+                    },
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/UserRolesList"
+                        }
+                    }
+                },
+                "summary": "Get all user roles",
+                "operationId": "list_all_user_roles",
+                "security": [
+                    {
+                        "apikey": []
+                    }
+                ],
+                "tags": [
+                    "user_role"
+                ]
+            }
+        },
+        "/user_role/{role}": {
+            "parameters": [
+                {
+                    "in": "path",
+                    "description": "User role",
+                    "name": "role",
+                    "required": true,
+                    "type": "string"
+                }
+            ],
+            "delete": {
+                "responses": {
+                    "404": {
+                        "description": "User role not found"
+                    },
+                    "200": {
+                        "description": "User role deleted successfully"
+                    }
+                },
+                "summary": "Delete a user role",
+                "operationId": "delete_user_role",
+                "security": [
+                    {
+                        "apikey": []
+                    }
+                ],
+                "tags": [
+                    "user_role"
+                ]
+            },
+            "get": {
+                "responses": {
+                    "404": {
+                        "description": "User role not found"
+                    },
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/UserRole"
+                        }
+                    }
+                },
+                "summary": "Get user role",
+                "operationId": "get_user_role",
+                "security": [
+                    {
+                        "apikey": []
+                    }
+                ],
+                "tags": [
+                    "user_role"
+                ]
+            }
+        }
+    },
+    "info": {
+        "title": "Timezone Keeper API",
+        "version": "1.0",
+        "description": "A timezone keeper for everyday use"
+    },
+    "produces": [
+        "application/json"
+    ],
+    "consumes": [
+        "application/json"
+    ],
+    "securityDefinitions": {
+        "apikey": {
+            "type": "apiKey",
+            "in": "header",
+            "name": "Authorization",
+            "description": "Type in the *'Value'* input box below: **'Bearer &lt;JWT&gt;'**, where JWT is the token"
+        }
+    },
+    "tags": [
+        {
+            "name": "timezone",
+            "description": ""
+        },
+        {
+            "name": "auth",
+            "description": "\nAuth API - manages user authentication\n"
+        },
+        {
+            "name": "user_role",
+            "description": "\nUser Role API - for role management\n"
+        },
+        {
+            "name": "user",
+            "description": "\nUser API - for user management\n"
+        },
+        {
+            "name": "timezone",
+            "description": "\nTimezone API\n"
+        }
+    ],
+    "definitions": {
+        "UserAuth": {
+            "required": [
+                "password",
+                "username"
+            ],
+            "properties": {
+                "username": {
+                    "type": "string",
+                    "description": "username",
+                    "example": "JohnDoe2"
+                },
+                "password": {
+                    "type": "string",
+                    "description": "password",
+                    "example": "P@55w0rd!"
+                }
+            },
+            "type": "object"
+        },
+        "UserRole": {
+            "properties": {
+                "role": {
+                    "type": "string",
+                    "description": "User Role",
+                    "example": "admin"
+                },
+                "permissions": {
+                    "type": "array",
+                    "example": [
+                        "CRUD-records"
+                    ],
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            },
+            "type": "object"
+        },
+        "UserRolesList": {
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/UserRole"
+                    }
+                }
+            },
+            "type": "object"
+        },
+        "UserWithPasswd": {
+            "required": [
+                "email",
+                "first_name",
+                "last_name",
+                "password",
+                "username"
+            ],
+            "properties": {
+                "first_name": {
+                    "type": "string",
+                    "description": "first name",
+                    "example": "John"
+                },
+                "last_name": {
+                    "type": "string",
+                    "description": "last name",
+                    "example": "Doe"
+                },
+                "username": {
+                    "type": "string",
+                    "description": "username",
+                    "example": "JohnDoe2"
+                },
+                "email": {
+                    "type": "string",
+                    "description": "user email",
+                    "example": "me@email.com"
+                },
+                "password": {
+                    "type": "string",
+                    "description": "password",
+                    "example": "P@55w0rd!"
+                }
+            },
+            "type": "object"
+        },
+        "User": {
+            "required": [
+                "email",
+                "first_name",
+                "last_name",
+                "role",
+                "username"
+            ],
+            "properties": {
+                "first_name": {
+                    "type": "string",
+                    "description": "first name",
+                    "example": "John"
+                },
+                "last_name": {
+                    "type": "string",
+                    "description": "last name",
+                    "example": "Doe"
+                },
+                "username": {
+                    "type": "string",
+                    "description": "username",
+                    "example": "JohnDoe2"
+                },
+                "email": {
+                    "type": "string",
+                    "description": "user email",
+                    "example": "me@email.com"
+                },
+                "role": {
+                    "type": "string",
+                    "description": "user role",
+                    "example": "manager"
+                },
+                "enabled": {
+                    "type": "boolean",
+                    "description": "User account status",
+                    "example": true
+                }
+            },
+            "type": "object"
+        },
+        "UserData": {
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/User"
+                    }
+                }
+            },
+            "type": "object"
+        },
+        "UserUpdatable": {
+            "properties": {
+                "first_name": {
+                    "type": "string",
+                    "description": "first name",
+                    "example": "John"
+                },
+                "last_name": {
+                    "type": "string",
+                    "description": "last name",
+                    "example": "Doe"
+                },
+                "email": {
+                    "type": "string",
+                    "description": "user email",
+                    "example": "me@email.com"
+                },
+                "password": {
+                    "type": "string",
+                    "description": "user password",
+                    "example": "this_is_my_password"
+                },
+                "role": {
+                    "type": "string",
+                    "description": "user role",
+                    "example": "user"
+                }
+            },
+            "type": "object"
+        },
+        "TimezoneList2": {
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Timezone2"
+                    }
+                }
+            },
+            "type": "object"
+        },
+        "Timezone2": {
+            "required": [
+                "city",
+                "id",
+                "location",
+                "relative_to_gmt"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "description": "user timezone id",
+                    "example": 1
+                },
+                "location": {
+                    "type": "string",
+                    "description": "timezone location",
+                    "example": "Europe"
+                },
+                "city": {
+                    "type": "string",
+                    "description": "city name withing the timezone",
+                    "example": "London"
+                },
+                "relative_to_gmt": {
+                    "type": "string",
+                    "description": "gmt offset, in hours",
+                    "example": "0:00"
+                }
+            },
+            "type": "object"
+        },
+        "UserTimezoneNoId": {
+            "required": [
+                "name",
+                "timezone_id"
+            ],
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "timezone name",
+                    "example": "GMT"
+                },
+                "timezone_id": {
+                    "type": "integer",
+                    "description": "timezone id",
+                    "example": 2
+                }
+            },
+            "type": "object"
+        },
+        "UserTimezone": {
+            "required": [
+                "id",
+                "name",
+                "timezone_id"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "description": "user timezone id",
+                    "example": 1
+                },
+                "name": {
+                    "type": "string",
+                    "description": "timezone name",
+                    "example": "GMT"
+                },
+                "timezone_id": {
+                    "type": "integer",
+                    "description": "timezone id",
+                    "example": 2
+                }
+            },
+            "type": "object"
+        },
+        "TimezoneList": {
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Timezone"
+                    }
+                }
+            },
+            "type": "object"
+        },
+        "Timezone": {
+            "required": [
+                "city",
+                "location",
+                "name",
+                "relative_to_gmt"
+            ],
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "timezone name",
+                    "example": "GMT"
+                },
+                "location": {
+                    "type": "string",
+                    "description": "timezone location",
+                    "example": "Europe"
+                },
+                "city": {
+                    "type": "string",
+                    "description": "city name withing the timezone",
+                    "example": "London"
+                },
+                "relative_to_gmt": {
+                    "type": "string",
+                    "description": "gmt offset, in hours",
+                    "example": "0:00"
+                }
+            },
+            "type": "object"
+        }
+    },
+    "responses": {
+        "ParseError": {
+            "description": "When a mask can't be parsed"
+        },
+        "MaskError": {
+            "description": "When any error occurs on mask"
+        },
+        "StorageError": {
+            "description": "Storage Errors"
+        },
+        "InvalidFieldFormat": {
+            "description": "Misc Errors"
+        },
+        "ValueError": {
+            "description": "Misc Errors"
+        },
+        "AuthError": {
+            "description": "Auth Errors"
+        },
+        "PyJWTError": {
+            "description": "Handles errors dues to using expired tokens"
+        },
+        "JWTExtendedException": {
+            "description": "JWT authentication error"
+        },
+        "BadRequest": {
+            "description": "Invalid Request"
+        },
+        "NotFound": {
+            "description": "Not Found"
+        }
+    },
+    "host": "127.0.0.1:7777"
+}
