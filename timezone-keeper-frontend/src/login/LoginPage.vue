@@ -14,7 +14,7 @@
             </div>
             <div class="form-group">
                 <button class="btn btn-primary" :disabled="status.loggingIn">Login</button>
-                <router-link to="/register" class="btn btn-link">Register</router-link>
+                <button class="btn btn-primary" v-on:click="$router.push('/register')">Register</button>
             </div>
         </form>
     </div>

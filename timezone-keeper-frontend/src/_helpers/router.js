@@ -4,7 +4,8 @@ import Router from 'vue-router';
 import HomePage from '../home/HomePage'
 import LoginPage from '../login/LoginPage'
 import RegisterPage from '../register/RegisterPage'
-import UserTimezonePAge from '../timezones/UserTimezonePAge'
+import UserTimezonePage from '../timezones/UserTimezonePage'
+import UserDetailsPage from '../users/UserDetailsPage'
 
 Vue.use(Router);
 
@@ -14,7 +15,8 @@ export const router = new Router({
     { path: '/', component: HomePage },
     { path: '/login', component: LoginPage },
     { path: '/register', component: RegisterPage },
-    { path: '/timezone', component: UserTimezonePAge },
+    { path: '/timezone', component: UserTimezonePage },
+    { path: '/user', component: UserDetailsPage },
 
     // otherwise redirect to home
     { path: '*', redirect: '/' }

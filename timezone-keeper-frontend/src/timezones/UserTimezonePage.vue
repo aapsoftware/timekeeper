@@ -1,6 +1,5 @@
 <template>
     <div>
-        <h2 v-if="timezone_to_update">{{timezone_to_update}}</h2>
         <h2 v-if="timezone_to_update">Update Timezone</h2>
         <h2 v-else>Create a new Timezone</h2>
         <form @submit.prevent="handleSubmit">

@@ -1,65 +1,49 @@
 import { userService } from '../_services';
 
 const state = {
-    all: {}
+    user: {},
+    status: {}
 };
 
 const actions = {
-    getAll({ commit }) {
-        commit('getAllRequest');
-
-        userService.getAll()
+    getUserDetails({ commit }) {
+        commit('getUserDetailsRequest');
+        userService.getUserDetails()
             .then(
-                users => commit('getAllSuccess', users),
-                error => commit('getAllFailure', error)
+                user => commit('getUserDetailsSuccess', user),
+                error => commit('getUserDetailsFailure', error)
             );
     },
-
-    delete({ commit }, username) {
-        commit('deleteRequest', username);
-
-        userService.delete(username)
+    updateUserDetails({ commit }, userDetails) {
+        commit('updateUserDetailsRequest');
+        userService.updateUserDetails(userDetails)
             .then(
-                user => commit('deleteSuccess', username),
-                error => commit('deleteFailure', { username, error: error.toString() })
+                user => commit('updateUserDetailsSuccess', user),
+                error => commit('updateUserDetailsFailure', error)
             );
     }
 };
 
 const mutations = {
-    getAllRequest(state) {
-        state.all = { loading: true };
+    getUserDetailsRequest(state) {
+        state.status = { loadingUserDetails: true };
     },
-    getAllSuccess(state, users) {
-        state.all = { items: users['data'] };
+    getUserDetailsSuccess(state, user) {
+        state.user = user;
+        state.status = { loadedUserDetails: true };
     },
-    getAllFailure(state, error) {
-        state.all = { error };
+    getUserDetailsFailure(state, error) {
+        state.status = { error };
     },
-    deleteRequest(state, id) {
-        // add 'deleting:true' property to user being deleted
-        state.all.items = state.all.items.map(user =>
-            user.id === id
-                ? { ...user, deleting: true }
-                : user
-        )
+    updateUserDetailsRequest(state) {
+        state.status = { updatingUserDetails: true };
     },
-    deleteSuccess(state, id) {
-        // remove deleted user from state
-        state.all.items = state.all.items.filter(user => user.id !== id)
+    updateUserDetailsSuccess(state, user) {
+        state.user = user;
+        state.status = { updatedUserDetails: true };
     },
-    deleteFailure(state, { id, error }) {
-        // remove 'deleting:true' property and add 'deleteError:[error]' property to user
-        state.all.items = state.items.map(user => {
-            if (user.id === id) {
-                // make copy of user without 'deleting:true' property
-                const { deleting, ...userCopy } = user;
-                // return copy of user with 'deleteError:[error]' property
-                return { ...userCopy, deleteError: error };
-            }
-
-            return user;
-        })
+    updateUserDetailsFailure(state, error) {
+        state.status = { error };
     }
 };
 

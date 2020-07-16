@@ -26,13 +26,12 @@ const actions = {
                 error => commit('getAllForUserFailure', error)
             );
     },
-    create({ dispathc, commit }, timezone) {
+    create({ dispatch, commit }, timezone) {
         commit('createRequest');
         timezoneService.create(timezone)
             .then(
                 new_timezone => {
                     commit('createSuccess', new_timezone );
-                    // router.push('/');
                     router.go(-1)
                     setTimeout(() => {
                         // display success message after route change completes
@@ -46,7 +45,7 @@ const actions = {
         commit('deleteRequest', name);
         timezoneService.delete(name)
             .then(
-                user => commit('deleteSuccess', name),
+                data => commit('deleteSuccess', name),
                 error => commit('deleteFailure', { name: name, error: error.toString() })
             );
     },
@@ -54,7 +53,7 @@ const actions = {
         commit('updateRequest', name);
         timezoneService.update(name, timezone)
             .then(
-                user => {
+                data => {
                     commit('updateSuccess', name),
                     router.go(-1)
                     setTimeout(() => {

@@ -29,7 +29,7 @@
             </div>
             <div class="form-group">
                 <button class="btn btn-primary" :disabled="status.registering">Register</button>
-                <router-link to="/login" class="btn btn-link">Cancel</router-link>
+                <button class="btn btn-primary" v-on:click="$router.push('/login')">Cancel</button>
             </div>
         </form>
     </div>

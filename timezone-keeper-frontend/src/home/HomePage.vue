@@ -1,12 +1,13 @@
 <template>
     <div>
         <p>
-            <router-link to="/login">Logout</router-link>
+            <button class="btn btn-primary" v-on:click="$router.push('/login')">Logout</button>
+            <button class="btn btn-primary" v-on:click="$router.push('/user')">Account</button>
         </p>
-        <h1>Hi {{account.user.username}}!</h1>
+        <h1>Hi {{username}}!</h1>
         <p>You're logged in</p>
         <p>
-            <router-link to="/timezone">Add a Timezone</router-link>
+            <button class="btn btn-primary" v-on:click="$router.push('/timezone')">Add a Timezone</button>
         </p>
         <h3 v-if="timezones.user_timezones">Here are your monitored timezones</h3>
         <ul v-if="timezones.user_timezones">
@@ -29,6 +30,11 @@
 import { mapState, mapActions } from 'vuex'
 
 export default {
+    data () {
+        return {
+            username: ''
+        }
+    },
     computed: {
         ...mapState({
             account: state => state.account,
@@ -37,6 +43,7 @@ export default {
     },
     created () {
         this.getAllTimezonesForUser();
+        this.username = JSON.parse(localStorage.getItem('user'))['username'];
     },
     methods: {
         ...mapActions('timezones', {
