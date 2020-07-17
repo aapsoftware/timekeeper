@@ -311,3 +311,286 @@ class TestUserApi(BaseTestCase):
             headers = {'Authorization': 'Bearer ' + access_token}
         )
         self.assertStatus(response, 403)
+
+    def test_get_user_missing_auth_header(self):
+        username = 'admin'
+        response = self.client.open(
+            f'/api/v1/user/{username}',
+            method='GET',
+            content_type='application/json'
+        )
+        self.assertStatus(response, 401)
+
+    def test_get_user_invalid_token(self):
+        username = 'admin'
+        response = self.client.open(
+            f'/api/v1/user/{username}',
+            method='GET',
+            content_type='application/json',
+            headers = {'Authorization': 'Bearer test'}
+        )
+        self.assertStatus(response, 401)
+
+    def test_get_user_not_found(self):
+        user = th.get_user_details('admin')
+        access_token = flask_jwt_extended.create_access_token(identity=user)
+
+        username = 'test'
+        response = self.client.open(
+            f'/api/v1/user/{username}',
+            method='GET',
+            content_type='application/json',
+            headers = {'Authorization': 'Bearer ' + access_token}
+        )
+        self.assertStatus(response, 404)
+
+    def test_create_user(self):
+        user_data = {
+            'first_name': 'first_name',
+            'last_name': 'last_name',
+            'username': 'username',
+            'email': 'email@test.com',
+            'password': 'password'
+        }
+        response = self.client.open(
+            '/api/v1/user',
+            method='POST',
+            content_type='application/json',
+            data=json.dumps(user_data)
+        )
+        self.assertStatus(response, 200)
+
+        data = response.json
+
+        self.assertEqual(data['first_name'], 'first_name')
+        self.assertEqual(data['last_name'], 'last_name')
+        self.assertEqual(data['username'], 'username')
+        self.assertEqual(data['email'], 'email@test.com')
+        self.assertEqual(data['enabled'], False)
+        self.assertNotIn('password', data)
+        self.assertNotIn('role', data)
+
+        db_data = UserDetails.get('username')
+        self.assertEqual(db_data.role_id, None)
+
+    def test_create_user_missing_field(self):
+        user_data = {
+            'first_name': 'first_name',
+            'username': 'username',
+            'email': 'email@test.com',
+            'password': 'password'
+        }
+        response = self.client.open(
+            '/api/v1/user',
+            method='POST',
+            content_type='application/json',
+            data=json.dumps(user_data)
+        )
+        self.assertStatus(response, 400)
+
+    def test_create_user_empty_field(self):
+        user_data = {
+            'first_name': '',
+            'last_name': 'last_name',
+            'username': 'username',
+            'email': 'email@test.com',
+            'password': 'password'
+        }
+        response = self.client.open(
+            '/api/v1/user',
+            method='POST',
+            content_type='application/json',
+            data=json.dumps(user_data)
+        )
+        self.assertStatus(response, 400)
+
+    def test_create_user_invalid_email(self):
+        user_data = {
+            'first_name': 'first_name',
+            'last_name': 'last_name',
+            'username': 'username',
+            'email': 'emailtest.com',
+            'password': 'password'
+        }
+        response = self.client.open(
+            '/api/v1/user',
+            method='POST',
+            content_type='application/json',
+            data=json.dumps(user_data)
+        )
+        self.assertStatus(response, 400)
+
+    def test_create_user_conflict(self):
+        user_data = {
+            'first_name': 'first_name',
+            'last_name': 'last_name',
+            'username': 'username',
+            'email': 'email@test.com',
+            'password': 'password'
+        }
+        response = self.client.open(
+            '/api/v1/user',
+            method='POST',
+            content_type='application/json',
+            data=json.dumps(user_data)
+        )
+        self.assertStatus(response, 200)
+
+        response = self.client.open(
+            '/api/v1/user',
+            method='POST',
+            content_type='application/json',
+            data=json.dumps(user_data)
+        )
+        self.assertStatus(response, 409)
+
+    def test_delete_user_admin_by_admin(self):
+        user = th.get_user_details('admin')
+        access_token = flask_jwt_extended.create_access_token(identity=user)
+
+        self.assertEqual(len(UserDetails.get_all()), 3)
+        username = 'admin'
+        response = self.client.open(
+            f'/api/v1/user/{username}',
+            method='DELETE',
+            content_type='application/json',
+            headers = {'Authorization': 'Bearer ' + access_token}
+        )
+        self.assertStatus(response, 200)
+
+        self.assertEqual(len(UserDetails.get_all()), 2)
+        self.assertEqual(UserDetails.get(username), None)
+
+    def test_delete_user_manager_by_admin(self):
+        user = th.get_user_details('admin')
+        access_token = flask_jwt_extended.create_access_token(identity=user)
+
+        self.assertEqual(len(UserDetails.get_all()), 3)
+        username = 'manager'
+        response = self.client.open(
+            f'/api/v1/user/{username}',
+            method='DELETE',
+            content_type='application/json',
+            headers = {'Authorization': 'Bearer ' + access_token}
+        )
+        self.assertStatus(response, 200)
+
+        self.assertEqual(len(UserDetails.get_all()), 2)
+        self.assertEqual(UserDetails.get(username), None)
+
+    def test_delete_user_user_by_admin(self):
+        user = th.get_user_details('admin')
+        access_token = flask_jwt_extended.create_access_token(identity=user)
+
+        self.assertEqual(len(UserDetails.get_all()), 3)
+        username = 'user'
+        response = self.client.open(
+            f'/api/v1/user/{username}',
+            method='DELETE',
+            content_type='application/json',
+            headers = {'Authorization': 'Bearer ' + access_token}
+        )
+        self.assertStatus(response, 200)
+
+        self.assertEqual(len(UserDetails.get_all()), 2)
+        self.assertEqual(UserDetails.get(username), None)
+
+
+    def test_delete_user_admin_by_manager(self):
+        user = th.get_user_details('manager')
+        access_token = flask_jwt_extended.create_access_token(identity=user)
+
+        self.assertEqual(len(UserDetails.get_all()), 3)
+        username = 'admin'
+        response = self.client.open(
+            f'/api/v1/user/{username}',
+            method='DELETE',
+            content_type='application/json',
+            headers = {'Authorization': 'Bearer ' + access_token}
+        )
+        self.assertStatus(response, 403)
+        self.assertEqual(len(UserDetails.get_all()), 3)
+
+
+    def test_delete_user_manager_by_manager(self):
+        user = th.get_user_details('manager')
+        access_token = flask_jwt_extended.create_access_token(identity=user)
+
+        self.assertEqual(len(UserDetails.get_all()), 3)
+        username = 'manager'
+        response = self.client.open(
+            f'/api/v1/user/{username}',
+            method='DELETE',
+            content_type='application/json',
+            headers = {'Authorization': 'Bearer ' + access_token}
+        )
+        self.assertStatus(response, 200)
+
+        self.assertEqual(len(UserDetails.get_all()), 2)
+        self.assertEqual(UserDetails.get(username), None)
+
+    def test_delete_user_user_by_manager(self):
+        user = th.get_user_details('manager')
+        access_token = flask_jwt_extended.create_access_token(identity=user)
+
+        self.assertEqual(len(UserDetails.get_all()), 3)
+        username = 'user'
+        response = self.client.open(
+            f'/api/v1/user/{username}',
+            method='DELETE',
+            content_type='application/json',
+            headers = {'Authorization': 'Bearer ' + access_token}
+        )
+        self.assertStatus(response, 200)
+
+        self.assertEqual(len(UserDetails.get_all()), 2)
+        self.assertEqual(UserDetails.get(username), None)
+
+    def test_delete_user_admin_by_user(self):
+        user = th.get_user_details('user')
+        access_token = flask_jwt_extended.create_access_token(identity=user)
+
+        self.assertEqual(len(UserDetails.get_all()), 3)
+        username = 'admin'
+        response = self.client.open(
+            f'/api/v1/user/{username}',
+            method='DELETE',
+            content_type='application/json',
+            headers = {'Authorization': 'Bearer ' + access_token}
+        )
+        self.assertStatus(response, 403)
+        self.assertEqual(len(UserDetails.get_all()), 3)
+
+
+    def test_delete_user_manager_by_user(self):
+        user = th.get_user_details('user')
+        access_token = flask_jwt_extended.create_access_token(identity=user)
+
+        self.assertEqual(len(UserDetails.get_all()), 3)
+        username = 'manager'
+        response = self.client.open(
+            f'/api/v1/user/{username}',
+            method='DELETE',
+            content_type='application/json',
+            headers = {'Authorization': 'Bearer ' + access_token}
+        )
+        self.assertStatus(response, 403)
+
+        self.assertEqual(len(UserDetails.get_all()), 3)
+
+    def test_delete_user_user_by_user(self):
+        user = th.get_user_details('user')
+        access_token = flask_jwt_extended.create_access_token(identity=user)
+
+        self.assertEqual(len(UserDetails.get_all()), 3)
+        username = 'user'
+        response = self.client.open(
+            f'/api/v1/user/{username}',
+            method='DELETE',
+            content_type='application/json',
+            headers = {'Authorization': 'Bearer ' + access_token}
+        )
+        self.assertStatus(response, 200)
+
+        self.assertEqual(len(UserDetails.get_all()), 2)
+        self.assertEqual(UserDetails.get(username), None)
