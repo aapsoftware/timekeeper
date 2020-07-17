@@ -3,7 +3,6 @@
 PROJECT_ROOT_DIR="$(dirname $( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd ))"
 SCRIPT_LOCATION="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-# run component and unit tests
 DOCOLOR="${DOCOLOR:-0}"
 txtred=
 txtgrn=
@@ -49,7 +48,7 @@ trap cleanup INT
 echo ""
 echo "------------- TEST: Running unit tests."
 
-nosetests -s test/test_user_api.py
+nosetests -s test/test_*.py
 checkreturn
 
 
