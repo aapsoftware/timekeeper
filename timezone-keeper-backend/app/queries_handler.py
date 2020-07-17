@@ -110,8 +110,9 @@ def _validate_user_request(username, req_username, permission):
             user_perm = perm_query.one_or_none()
             if not user_perm:
                 raise error.RecordNotFoundError(f'username {username} not found')
-            if (UserRolesEnum.user_privileged.value in user_perm.permissions or
-                UserRolesEnum.user_all.value in user_perm.permissions):
+            if ((UserRolesEnum.user_privileged.value in user_perm.permissions or
+                UserRolesEnum.user_all.value in user_perm.permissions) and
+                not permission == UserRolesEnum.user_all.value):
                 raise error.PermissionsError()
 
 def get_user(username, req_username, permission):
@@ -461,7 +462,7 @@ def authenticate_user(username, passwd):
     generates jwt token for user
     """
     query = db.session.query(UserDetails, UserRoles).outerjoin(UserRoles, UserRoles.id == UserDetails.role_id)
-    log.error(query.all())
+
     user = None
     if username is not None:
         query = query.filter(UserDetails.username == username)
@@ -472,7 +473,7 @@ def authenticate_user(username, passwd):
 
         if not(res and UserDetails.verify_hash(passwd, res.UserDetails.password)):
             raise error.AuthError('invalid user credentials')
-        
+
         user = res.UserRoles.to_dict()
         user.update(res.UserDetails.to_dict())
     else:

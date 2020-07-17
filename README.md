@@ -15,6 +15,14 @@ source venv/bin/activate
 pip3 install -r requirements.txt
 ```
 
+
+### Running the backend unit-tests
+
+```
+pip3 install -r test-requirements.txt
+./run-tests.sh
+```
+
 ### Running the backend server
 Running the service
 ```
