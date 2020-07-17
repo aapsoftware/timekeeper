@@ -594,3 +594,353 @@ class TestUserApi(BaseTestCase):
 
         self.assertEqual(len(UserDetails.get_all()), 2)
         self.assertEqual(UserDetails.get(username), None)
+
+    def test_update_user_admin(self):
+        admin_user = th.get_user_details('admin')
+        access_token = flask_jwt_extended.create_access_token(identity=admin_user)
+
+        new_user_details = {
+            'first_name': 'modified',
+            'last_name': 'modififed',
+            'email': 'modified@timezonekeeper.com'
+        }
+        username = 'admin'
+        response = self.client.open(
+            f'/api/v1/user/{username}',
+            method='PUT',
+            content_type='application/json',
+            headers = {'Authorization': 'Bearer ' + access_token},
+            data=json.dumps(new_user_details)
+        )
+        self.assertStatus(response, 200)
+
+        data = UserDetails.get(username).to_dict()
+
+        self.assertEqual(data['first_name'], 'modified')
+        self.assertEqual(data['last_name'], 'modififed')
+        self.assertEqual(data['username'], 'admin')
+        self.assertEqual(data['email'], 'modified@timezonekeeper.com')
+        self.assertEqual(data['enabled'], True)
+
+        new_user_details = {
+            'first_name': 'modified',
+            'last_name': 'modififed',
+            'email': 'modified1@timezonekeeper.com'
+        }
+        username = 'user'
+        response = self.client.open(
+            f'/api/v1/user/{username}',
+            method='PUT',
+            content_type='application/json',
+            headers = {'Authorization': 'Bearer ' + access_token},
+            data=json.dumps(new_user_details)
+        )
+        self.assertStatus(response, 200)
+
+        data = UserDetails.get(username).to_dict()
+
+        self.assertEqual(data['first_name'], 'modified')
+        self.assertEqual(data['last_name'], 'modififed')
+        self.assertEqual(data['username'], 'user')
+        self.assertEqual(data['email'], 'modified1@timezonekeeper.com')
+        self.assertEqual(data['enabled'], True)
+
+        new_user_details = {
+            'first_name': 'modified',
+            'last_name': 'modififed',
+            'email': 'modified2@timezonekeeper.com'
+        }
+        username = 'manager'
+        response = self.client.open(
+            f'/api/v1/user/{username}',
+            method='PUT',
+            content_type='application/json',
+            headers={'Authorization': 'Bearer ' + access_token},
+            data=json.dumps(new_user_details)
+        )
+        self.assertStatus(response, 200)
+
+        data = UserDetails.get(username).to_dict()
+
+        self.assertEqual(data['first_name'], 'modified')
+        self.assertEqual(data['last_name'], 'modififed')
+        self.assertEqual(data['username'], 'manager')
+        self.assertEqual(data['email'], 'modified2@timezonekeeper.com')
+        self.assertEqual(data['enabled'], True)
+
+    def test_update_user_manager(self):
+        admin_user = th.get_user_details('manager')
+        access_token = flask_jwt_extended.create_access_token(identity=admin_user)
+
+        new_user_details = {
+            'first_name': 'modified',
+            'last_name': 'modififed',
+            'email': 'modified@timezonekeeper.com'
+        }
+        username = 'admin'
+        response = self.client.open(
+            f'/api/v1/user/{username}',
+            method='PUT',
+            content_type='application/json',
+            headers = {'Authorization': 'Bearer ' + access_token},
+            data=json.dumps(new_user_details)
+        )
+        self.assertStatus(response, 403)
+
+        username = 'user'
+        response = self.client.open(
+            f'/api/v1/user/{username}',
+            method='PUT',
+            content_type='application/json',
+            headers = {'Authorization': 'Bearer ' + access_token},
+            data=json.dumps(new_user_details)
+        )
+        self.assertStatus(response, 200)
+
+        data = UserDetails.get(username).to_dict()
+
+        self.assertEqual(data['first_name'], 'modified')
+        self.assertEqual(data['last_name'], 'modififed')
+        self.assertEqual(data['username'], 'user')
+        self.assertEqual(data['email'], 'modified@timezonekeeper.com')
+        self.assertEqual(data['enabled'], True)
+
+        new_user_details = {
+            'first_name': 'modified',
+            'last_name': 'modififed',
+            'email': 'modified1@timezonekeeper.com'
+        }
+        username = 'manager'
+        response = self.client.open(
+            f'/api/v1/user/{username}',
+            method='PUT',
+            content_type='application/json',
+            headers = {'Authorization': 'Bearer ' + access_token},
+            data=json.dumps(new_user_details)
+        )
+        self.assertStatus(response, 200)
+
+        data = UserDetails.get(username).to_dict()
+
+        self.assertEqual(data['first_name'], 'modified')
+        self.assertEqual(data['last_name'], 'modififed')
+        self.assertEqual(data['username'], 'manager')
+        self.assertEqual(data['email'], 'modified1@timezonekeeper.com')
+        self.assertEqual(data['enabled'], True)
+
+    def test_update_user_user(self):
+        admin_user = th.get_user_details('user')
+        access_token = flask_jwt_extended.create_access_token(identity=admin_user)
+
+        new_user_details = {
+            'first_name': 'modified',
+            'last_name': 'modififed',
+            'email': 'modified@timezonekeeper.com'
+        }
+        username = 'admin'
+        response = self.client.open(
+            f'/api/v1/user/{username}',
+            method='PUT',
+            content_type='application/json',
+            headers = {'Authorization': 'Bearer ' + access_token},
+            data=json.dumps(new_user_details)
+        )
+        self.assertStatus(response, 403)
+
+        username = 'user'
+        response = self.client.open(
+            f'/api/v1/user/{username}',
+            method='PUT',
+            content_type='application/json',
+            headers = {'Authorization': 'Bearer ' + access_token},
+            data=json.dumps(new_user_details)
+        )
+        self.assertStatus(response, 200)
+
+        data = UserDetails.get(username).to_dict()
+
+        self.assertEqual(data['first_name'], 'modified')
+        self.assertEqual(data['last_name'], 'modififed')
+        self.assertEqual(data['username'], 'user')
+        self.assertEqual(data['email'], 'modified@timezonekeeper.com')
+        self.assertEqual(data['enabled'], True)
+
+        username = 'manager'
+        response = self.client.open(
+            f'/api/v1/user/{username}',
+            method='PUT',
+            content_type='application/json',
+            headers = {'Authorization': 'Bearer ' + access_token},
+            data=json.dumps(new_user_details)
+        )
+        self.assertStatus(response, 403)
+
+
+    def test_enable_disable_admin(self):
+        admin_user = th.get_user_details('admin')
+        access_token = flask_jwt_extended.create_access_token(identity=admin_user)
+
+        username = 'admin'
+        response = self.client.open(
+            f'/api/v1/user/{username}/enable',
+            method='POST',
+            content_type='application/json',
+            headers = {'Authorization': 'Bearer ' + access_token}
+        )
+        self.assertStatus(response, 200)
+
+        response = self.client.open(
+            f'/api/v1/user/{username}/disable',
+            method='POST',
+            content_type='application/json',
+            headers = {'Authorization': 'Bearer ' + access_token}
+        )
+        self.assertStatus(response, 200)
+
+    def test_enable_disable_admin_snd_part(self):
+        admin_user = th.get_user_details('admin')
+        access_token = flask_jwt_extended.create_access_token(identity=admin_user)
+
+        username = 'manager'
+        response = self.client.open(
+            f'/api/v1/user/{username}/enable',
+            method='POST',
+            content_type='application/json',
+            headers = {'Authorization': 'Bearer ' + access_token}
+        )
+        self.assertStatus(response, 200)
+
+        response = self.client.open(
+            f'/api/v1/user/{username}/disable',
+            method='POST',
+            content_type='application/json',
+            headers = {'Authorization': 'Bearer ' + access_token}
+        )
+        self.assertStatus(response, 200)
+
+        username = 'user'
+        response = self.client.open(
+            f'/api/v1/user/{username}/enable',
+            method='POST',
+            content_type='application/json',
+            headers = {'Authorization': 'Bearer ' + access_token}
+        )
+        self.assertStatus(response, 200)
+
+        response = self.client.open(
+            f'/api/v1/user/{username}/disable',
+            method='POST',
+            content_type='application/json',
+            headers = {'Authorization': 'Bearer ' + access_token}
+        )
+        self.assertStatus(response, 200)
+
+    def test_enable_disable_manager(self):
+        admin_user = th.get_user_details('manager')
+        access_token = flask_jwt_extended.create_access_token(identity=admin_user)
+
+        username = 'admin'
+        response = self.client.open(
+            f'/api/v1/user/{username}/enable',
+            method='POST',
+            content_type='application/json',
+            headers = {'Authorization': 'Bearer ' + access_token}
+        )
+        self.assertStatus(response, 403)
+
+        response = self.client.open(
+            f'/api/v1/user/{username}/disable',
+            method='POST',
+            content_type='application/json',
+            headers = {'Authorization': 'Bearer ' + access_token}
+        )
+        self.assertStatus(response, 403)
+
+        username = 'manager'
+        response = self.client.open(
+            f'/api/v1/user/{username}/enable',
+            method='POST',
+            content_type='application/json',
+            headers = {'Authorization': 'Bearer ' + access_token}
+        )
+        self.assertStatus(response, 403)
+
+        response = self.client.open(
+            f'/api/v1/user/{username}/disable',
+            method='POST',
+            content_type='application/json',
+            headers = {'Authorization': 'Bearer ' + access_token}
+        )
+        self.assertStatus(response, 403)
+
+        username = 'user'
+        response = self.client.open(
+            f'/api/v1/user/{username}/enable',
+            method='POST',
+            content_type='application/json',
+            headers = {'Authorization': 'Bearer ' + access_token}
+        )
+        self.assertStatus(response, 403)
+
+        response = self.client.open(
+            f'/api/v1/user/{username}/disable',
+            method='POST',
+            content_type='application/json',
+            headers = {'Authorization': 'Bearer ' + access_token}
+        )
+        self.assertStatus(response, 403)
+
+    def test_enable_disable_user(self):
+        admin_user = th.get_user_details('user')
+        access_token = flask_jwt_extended.create_access_token(identity=admin_user)
+
+        username = 'admin'
+        response = self.client.open(
+            f'/api/v1/user/{username}/enable',
+            method='POST',
+            content_type='application/json',
+            headers = {'Authorization': 'Bearer ' + access_token}
+        )
+        self.assertStatus(response, 403)
+
+        response = self.client.open(
+            f'/api/v1/user/{username}/disable',
+            method='POST',
+            content_type='application/json',
+            headers = {'Authorization': 'Bearer ' + access_token}
+        )
+        self.assertStatus(response, 403)
+
+        username = 'manager'
+        response = self.client.open(
+            f'/api/v1/user/{username}/enable',
+            method='POST',
+            content_type='application/json',
+            headers = {'Authorization': 'Bearer ' + access_token}
+        )
+        self.assertStatus(response, 403)
+
+        response = self.client.open(
+            f'/api/v1/user/{username}/disable',
+            method='POST',
+            content_type='application/json',
+            headers = {'Authorization': 'Bearer ' + access_token}
+        )
+        self.assertStatus(response, 403)
+
+        username = 'user'
+        response = self.client.open(
+            f'/api/v1/user/{username}/enable',
+            method='POST',
+            content_type='application/json',
+            headers = {'Authorization': 'Bearer ' + access_token}
+        )
+        self.assertStatus(response, 403)
+
+        response = self.client.open(
+            f'/api/v1/user/{username}/disable',
+            method='POST',
+            content_type='application/json',
+            headers = {'Authorization': 'Bearer ' + access_token}
+        )
+        self.assertStatus(response, 403)
