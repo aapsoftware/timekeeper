@@ -417,6 +417,10 @@ def update_user_timezone(username, tz_name, **kwargs):
     changed = False
 
     if new_name and timezone.name != new_name:
+        tz = _get_timezone_by_username_and_name(username, new_name)
+        if tz:
+            raise error.StorageErrorConflict(f'timezone {new_name} already exists')
+
         timezone.name = new_name
         changed = True
 
