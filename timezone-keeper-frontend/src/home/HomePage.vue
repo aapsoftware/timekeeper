@@ -2,7 +2,7 @@
     <div>
         <p>
             <button class="btn btn-primary" v-on:click="$router.push({path: '/login', query: { has_token: true }})">Logout</button>
-            <button class="btn btn-primary" v-on:click="$router.push('/user')">Account</button>
+            <button class="btn btn-primary" v-on:click="loadAccountDetails()">Account</button>
         </p>
         <h1>Hi {{username}}!</h1>
         <p>You're logged in</p>
@@ -51,8 +51,14 @@ export default {
             createTimezone: 'create',
             deleteTimezone: 'delete'
         }),
+        ...mapActions('users', {
+            getUserDetails: 'getUserDetails'
+        }),
         updateTimezone(timezone) {
             this.$router.push({path: '/timezone', query: { timezone_to_update: timezone}})
+        },
+        loadAccountDetails() {
+            this.getUserDetails()
         }
     }
 };

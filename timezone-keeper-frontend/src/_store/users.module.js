@@ -1,4 +1,5 @@
 import { userService } from '../_services';
+import { router } from '../_helpers';
 
 const state = {
     user: {},
@@ -6,12 +7,19 @@ const state = {
 };
 
 const actions = {
-    getUserDetails({ commit }) {
+    getUserDetails({ dispatch, commit }) {
         commit('getUserDetailsRequest');
+
         userService.getUserDetails()
             .then(
-                user => commit('getUserDetailsSuccess', user),
-                error => commit('getUserDetailsFailure', error)
+                user => {
+                    commit('getUserDetailsSuccess', user);
+                    router.push('/user');
+                },
+                error => {
+                    commit('getUserDetailsFailure', error);
+                    dispatch('alert/error', error, { root: true });
+                }
             );
     },
     updateUserDetails({ dispath, commit }, userDetails) {
@@ -39,6 +47,7 @@ const mutations = {
         state.status = { loadedUserDetails: true };
     },
     getUserDetailsFailure(state, error) {
+        state.user = {};
         state.status = { error };
     },
     updateUserDetailsRequest(state) {

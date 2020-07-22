@@ -80,12 +80,10 @@ export default {
         })
     },
     created () {
-        this.getUserDetails();
         this.user = this.users.user;
     },
     methods: {
         ...mapActions('users', {
-            getUserDetails: 'getUserDetails',
             updateUserDetails: 'updateUserDetails'
         }),
         handleSubmit(options) {

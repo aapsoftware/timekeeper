@@ -111,7 +111,8 @@ function handleResponse(response, options) {
                     location.reload(true);
                 }
             }
-            const error = (data && data.error.message) || response.statusText;
+            let msg = (data.error === undefined)? data.message : data.error.message;
+            const error = (data && msg) || response.statusText;
 
             return Promise.reject(error);
         }
